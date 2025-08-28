@@ -33,18 +33,20 @@ export class AuthService {
     return this.http.post<any>(`${this.API_URL}/Auth/Login`, credentials)
       .pipe(
         map(response => {
-          console.log('Resposta do login (JSON):', response);
+          console.log('🔐 Resposta do login (JSON):', response);
 
           // O backend retorna { "token": "JWT" }
           const token = response.token;
 
           if (token && token.startsWith('eyJ')) {
+            console.log('✅ Token JWT válido encontrado, armazenando...');
             localStorage.setItem('token', token);
+            console.log('💾 Token armazenado no localStorage');
 
             // Decodificar o JWT para obter informações do usuário
             try {
               const payload = JSON.parse(atob(token.split('.')[1]));
-              console.log('Payload do JWT:', payload);
+              console.log('🔍 Payload do JWT:', payload);
 
               const user: User = {
                 id: parseInt(payload.nameid),
@@ -57,16 +59,17 @@ export class AuthService {
               localStorage.setItem('user', JSON.stringify(user));
               this.currentUserSubject.next(user);
 
-              console.log('Usuário logado:', user);
+              console.log('👤 Usuário logado:', user);
+              console.log('🔑 Token armazenado:', this.getToken());
 
               // Retornar o usuário para o componente
               return { success: true, user, token };
             } catch (error) {
-              console.error('Erro ao decodificar JWT:', error);
+              console.error('❌ Erro ao decodificar JWT:', error);
               throw new Error('Token JWT inválido');
             }
           } else {
-            console.error('Token JWT não encontrado na resposta:', response);
+            console.error('❌ Token JWT não encontrado na resposta:', response);
             throw new Error('Token não encontrado na resposta');
           }
         })
@@ -88,7 +91,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    console.log('🔍 getToken() chamado, token encontrado:', !!token);
+    console.log('🔍 Token valor:', token ? token.substring(0, 20) + '...' : 'Nenhum');
+    return token;
   }
 
   isAuthenticated(): boolean {

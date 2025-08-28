@@ -47,20 +47,41 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log('🚀 Dashboard inicializando...');
     this.currentUser = this.authService.getCurrentUser();
+    console.log('👤 Usuário atual:', this.currentUser);
+    console.log('🔑 Token atual:', this.authService.getToken());
+    console.log('✅ Usuário autenticado:', this.authService.isAuthenticated());
+    
     if (!this.currentUser) {
+      console.warn('⚠️ Nenhum usuário encontrado, redirecionando para login...');
       this.router.navigate(['/login']);
       return;
     }
 
+    console.log('📋 Carregando grupos...');
     this.loadGroups();
   }
 
   loadGroups(): void {
-    // Implementar carregamento de grupos quando a API estiver disponível
+    console.log('Iniciando carregamento de grupos...');
     this.isLoading = true;
-    // this.groupService.getUserGroups().subscribe({...});
-    this.isLoading = false;
+    this.groupService.getAllGroups().subscribe({
+      next: (groups) => {
+        console.log('Grupos carregados com sucesso:', groups);
+        this.groups = groups;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar grupos:', error);
+        console.error('Status:', error.status);
+        console.error('Mensagem:', error.error);
+        this.isLoading = false;
+        this.snackBar.open('Erro ao carregar grupos', 'Fechar', {
+          duration: 3000
+        });
+      }
+    });
   }
 
   logout(): void {
@@ -79,8 +100,14 @@ export class DashboardComponent implements OnInit {
 
   onGroupCreated(event: any): void {
     const group = event as Group;
-    this.groups.push(group);
-    this.showCreateGroupDialog = false;
+    console.log('Evento de grupo criado recebido:', group);
+    
+    // Recarregar todos os grupos da API para garantir sincronização
+    this.loadGroups();
+    
+    // Não fechar o modal aqui, pois o modal já se fecha sozinho
+    // this.showCreateGroupDialog = false;
+    
     this.snackBar.open('Grupo criado com sucesso!', 'Fechar', {
       duration: 3000
     });
@@ -89,6 +116,8 @@ export class DashboardComponent implements OnInit {
   onMemberAdded(): void {
     this.showAddMemberDialog = false;
     this.selectedGroup = null;
+    // Recarregar grupos para mostrar o novo membro
+    this.loadGroups();
     this.snackBar.open('Membro adicionado com sucesso!', 'Fechar', {
       duration: 3000
     });
@@ -102,17 +131,37 @@ export class DashboardComponent implements OnInit {
     if (confirm(`Tem certeza que deseja excluir o grupo "${group.name}"?`)) {
       this.groupService.deleteGroup(group.id).subscribe({
         next: () => {
-          this.groups = this.groups.filter(g => g.id !== group.id);
+          // Recarregar grupos da API para garantir sincronização
+          this.loadGroups();
           this.snackBar.open('Grupo excluído com sucesso!', 'Fechar', {
             duration: 3000
           });
         },
         error: (error) => {
+          console.error('Erro ao excluir grupo:', error);
           this.snackBar.open('Erro ao excluir grupo', 'Fechar', {
             duration: 3000
           });
         }
       });
     }
+  }
+
+  testAPI(): void {
+    console.log('Testando API...');
+    console.log('Token atual:', this.authService.getToken());
+    console.log('Usuário atual:', this.currentUser);
+    
+    // Testar se a API está respondendo
+    this.groupService.getAllGroups().subscribe({
+      next: (response) => {
+        console.log('✅ API funcionando! Resposta:', response);
+        this.snackBar.open('API funcionando!', 'Fechar', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('❌ Erro na API:', error);
+        this.snackBar.open(`Erro na API: ${error.status} - ${error.message}`, 'Fechar', { duration: 5000 });
+      }
+    });
   }
 }

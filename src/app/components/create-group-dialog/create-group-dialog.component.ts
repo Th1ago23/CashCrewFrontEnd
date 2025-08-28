@@ -52,14 +52,34 @@ export class CreateGroupDialogComponent {
       console.log('URL da API:', '/api/Group/GroupCreate');
 
       this.groupService.createGroup(groupData).subscribe({
-        next: (group: Group) => {
-          console.log('Grupo criado com sucesso:', group);
+        next: (response: any) => {
+          console.log('Resposta completa da API:', response);
           this.isLoading = false;
+          
+          // Verificar se a resposta tem a estrutura esperada
+          let group: Group;
+          if (response && response.group) {
+            group = response.group;
+          } else if (response && response.id) {
+            group = response;
+          } else {
+            console.error('Resposta da API não tem formato esperado:', response);
+            this.snackBar.open('Erro: Resposta da API inválida', 'Fechar', {
+              duration: 4000
+            });
+            return;
+          }
+          
+          console.log('Grupo criado com sucesso:', group);
           this.snackBar.open('Grupo criado com sucesso!', 'Fechar', {
             duration: 3000
           });
+          
           // Emitir evento para o componente pai
           this.groupCreated.emit(group);
+          
+          // Fechar o modal
+          this.closed.emit();
         },
         error: (error) => {
           console.log('Erro ao criar grupo:', error);

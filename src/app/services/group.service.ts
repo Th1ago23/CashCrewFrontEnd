@@ -11,8 +11,14 @@ export class GroupService {
 
   constructor(private http: HttpClient) { }
 
-  createGroup(groupData: GroupCreate): Observable<Group> {
-    return this.http.post<Group>(`${this.API_URL}/Group/GroupCreate`, groupData);
+  createGroup(groupData: GroupCreate): Observable<any> {
+    console.log('🌐 GroupService - URL da requisição:', `${this.API_URL}/Group/GroupCreate`);
+    console.log('🌐 GroupService - API_URL configurada:', this.API_URL);
+    return this.http.post<any>(`${this.API_URL}/Group/GroupCreate`, groupData);
+  }
+
+  getAllGroups(): Observable<Group[]> {
+    return this.http.get<Group[]>(`${this.API_URL}/Group/GetAllGroups`);
   }
 
   addMember(groupId: number, userEmail: string): Observable<any> {

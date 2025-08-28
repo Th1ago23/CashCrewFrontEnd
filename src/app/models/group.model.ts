@@ -6,6 +6,9 @@ export interface Group {
   leaderId: number;
   isPublic: boolean;
   members?: User[];
+  memberCount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface GroupCreate {
