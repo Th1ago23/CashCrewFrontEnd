@@ -1,0 +1,45 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Adicionar Membro</h2>
+      <button mat-icon-button (click)="onCancel()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="group-info">
+      <p><strong>Grupo:</strong> {{ group.name }}</p>
+    </div>
+
+    <form [formGroup]="memberForm" (ngSubmit)="onSubmit()" class="dialog-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email do usuário</mat-label>
+        <input matInput formControlName="userEmail" type="email" placeholder="usuario@email.com">
+        <mat-error *ngIf="memberForm.get('userEmail')?.hasError('required')">
+          Email é obrigatório
+        </mat-error>
+        <mat-error *ngIf="memberForm.get('userEmail')?.hasError('email')">
+          Email inválido
+        </mat-error>
+      </mat-form-field>
+
+      <div class="dialog-actions">
+        <button 
+          mat-button 
+          type="button" 
+          (click)="onCancel()"
+          [disabled]="isLoading">
+          Cancelar
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="!memberForm.valid || isLoading">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">Adicionar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

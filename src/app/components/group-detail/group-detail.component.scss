@@ -1,0 +1,280 @@
+.group-detail-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.group-header {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.back-button {
+  color: #666;
+}
+
+.group-info {
+  flex: 1;
+
+  h1 {
+    margin: 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.create-expense-button {
+  height: 48px;
+  padding: 0 24px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.group-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 16px;
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.group-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.summary-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  &.total-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    h3, p {
+      color: white;
+    }
+  }
+
+  mat-card-content {
+    padding: 24px;
+
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .amount {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      color: #333;
+    }
+
+    .count {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      color: #333;
+    }
+  }
+}
+
+.balance-card, .expenses-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  mat-card-header {
+    padding-bottom: 16px;
+  }
+
+  mat-card-title {
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.member-balances {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.member-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #ddd;
+
+  &.positive {
+    border-left-color: #28a745;
+    background-color: #d4edda;
+  }
+
+  &.negative {
+    border-left-color: #dc3545;
+    background-color: #f8d7da;
+  }
+
+  &.neutral {
+    border-left-color: #6c757d;
+    background-color: #e2e3e5;
+  }
+
+  .member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .member-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .member-amount {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+  }
+
+  .member-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+
+    small {
+      color: #666;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.empty-expenses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  text-align: center;
+
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: #666;
+    margin: 0 0 24px 0;
+    font-size: 1.1rem;
+  }
+}
+
+.expenses-table {
+  width: 100%;
+  margin-top: 16px;
+
+  th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+  }
+
+  td, th {
+    padding: 12px 16px;
+  }
+
+  .mat-column-value {
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .mat-column-date {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 16px;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .group-main {
+    padding: 24px 16px;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .member-balance {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+
+    .member-details {
+      text-align: center;
+    }
+  }
+
+  .expenses-table {
+    font-size: 0.9rem;
+
+    td, th {
+      padding: 8px 12px;
+    }
+  }
+}

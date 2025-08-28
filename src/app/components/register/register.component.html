@@ -1,0 +1,241 @@
+<div class="register-container">
+  <!-- Background Animation -->
+  <div class="background-animation">
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="register-content">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <h1 class="app-title">CashCrew</h1>
+      <p class="app-subtitle">Junte-se a milhares de usuários que já simplificaram suas finanças em grupo</p>
+
+      <!-- Benefits List -->
+      <div class="benefits-list">
+        <div class="benefit-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Gratuito para sempre</span>
+        </div>
+        <div class="benefit-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Sem anúncios</span>
+        </div>
+        <div class="benefit-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Suporte premium</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Form Card -->
+    <div class="register-card">
+      <div class="card-header">
+        <h2>Crie sua conta</h2>
+        <p>Comece a gerenciar suas despesas em grupo hoje mesmo</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>person</mat-icon>
+            Informações Pessoais
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">badge</mat-icon>
+                  Nome completo
+                </mat-label>
+                <input matInput formControlName="fullName" placeholder="Seu nome completo">
+                <mat-error *ngIf="registerForm.get('fullName')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Nome é obrigatório
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('fullName')?.hasError('minlength')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Nome deve ter pelo menos 2 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">alternate_email</mat-icon>
+                  Username
+                </mat-label>
+                <input matInput formControlName="username" placeholder="Seu username">
+                <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Username é obrigatório
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Username deve ter pelo menos 3 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">email</mat-icon>
+                  Email
+                </mat-label>
+                <input matInput formControlName="email" type="email" placeholder="seu@email.com">
+                <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Email é obrigatório
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Email inválido
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">cake</mat-icon>
+                  Data de nascimento
+                </mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="birthday" placeholder="DD/MM/AAAA">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="registerForm.get('birthday')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Data de nascimento é obrigatória
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>security</mat-icon>
+            Segurança
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">lock</mat-icon>
+                  Senha
+                </mat-label>
+                <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Sua senha">
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" class="visibility-toggle">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Senha é obrigatória
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Senha deve ter pelo menos 8 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  <mat-icon class="field-icon">lock_reset</mat-icon>
+                  Confirmar senha
+                </mat-label>
+                <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirme sua senha">
+                <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" class="visibility-toggle">
+                  <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Confirmação de senha é obrigatória
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                  <mat-icon class="error-icon">error</mat-icon>
+                  Senhas não coincidem
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Submit -->
+        <div class="form-section">
+          <div class="terms-checkbox">
+            <mat-checkbox formControlName="acceptTerms" class="terms-checkbox-field">
+              <span class="terms-text">
+                Eu concordo com os
+                <a href="#" class="terms-link">Termos de Uso</a>
+                e
+                <a href="#" class="terms-link">Política de Privacidade</a>
+              </span>
+            </mat-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="register-button"
+              [disabled]="!registerForm.valid || isLoading">
+              <div class="button-content">
+                <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+                <span *ngIf="!isLoading">Criar conta</span>
+                <mat-icon *ngIf="!isLoading" class="button-icon">person_add</mat-icon>
+              </div>
+            </button>
+
+            <!-- Botão de teste -->
+            <button
+              type="button"
+              (click)="testButton()"
+              style="margin-top: 10px; padding: 10px; background: red; color: white; border: none; border-radius: 5px; width: 100%;">
+              TESTE - Clique aqui!
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="divider">
+        <span>ou</span>
+      </div>
+
+      <div class="social-register">
+        <button mat-stroked-button class="social-button google">
+          <mat-icon>g_mobiledata</mat-icon>
+          Continuar com Google
+        </button>
+      </div>
+
+      <div class="register-footer">
+        <p>Já tem uma conta?
+          <a (click)="goToLogin()" class="login-link">
+            <mat-icon>login</mat-icon>
+            Faça login
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

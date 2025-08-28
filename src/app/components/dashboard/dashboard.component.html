@@ -1,0 +1,116 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <h1>SplitBill</h1>
+        <p>Gerenciando suas despesas em grupo</p>
+      </div>
+
+      <div class="user-section">
+        <span class="welcome-text">Olá, {{ currentUser?.fullName }}</span>
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Sair</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="content-header">
+      <h2>Meus Grupos</h2>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openCreateGroupDialog()"
+        class="create-group-button">
+        <mat-icon>add</mat-icon>
+        Novo Grupo
+      </button>
+    </div>
+
+    <!-- Groups List -->
+    <div class="groups-container">
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Carregando grupos...</p>
+      </div>
+
+      <div *ngIf="!isLoading && groups.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">group</mat-icon>
+        <h3>Nenhum grupo encontrado</h3>
+        <p>Crie seu primeiro grupo para começar a dividir despesas</p>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openCreateGroupDialog()">
+          Criar Grupo
+        </button>
+      </div>
+
+      <div *ngIf="!isLoading && groups.length > 0" class="groups-grid">
+        <mat-card *ngFor="let group of groups" class="group-card">
+          <mat-card-header>
+            <mat-card-title>{{ group.name }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ group.isPublic ? 'Público' : 'Privado' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="group-description">
+              {{ group.members?.length || 0 }} membros
+            </p>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button
+              mat-button
+              color="primary"
+              (click)="viewGroup(group)">
+              <mat-icon>visibility</mat-icon>
+              Ver Grupo
+            </button>
+            <button
+              mat-button
+              color="accent"
+              (click)="openAddMemberDialog(group)">
+              <mat-icon>person_add</mat-icon>
+              Adicionar Membro
+            </button>
+            <button
+              mat-button
+              color="warn"
+              (click)="deleteGroup(group)"
+              *ngIf="group.leaderId === currentUser?.id">
+              <mat-icon>delete</mat-icon>
+              Excluir
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </main>
+
+  <!-- Create Group Dialog -->
+  <app-create-group-dialog
+    *ngIf="showCreateGroupDialog"
+    (groupCreated)="onGroupCreated($event)"
+    (closed)="showCreateGroupDialog = false">
+  </app-create-group-dialog>
+
+  <!-- Add Member Dialog -->
+  <app-add-member-dialog
+    *ngIf="showAddMemberDialog && selectedGroup"
+    [group]="selectedGroup"
+    (memberAdded)="onMemberAdded()"
+    (closed)="showAddMemberDialog = false">
+  </app-add-member-dialog>
+</div>

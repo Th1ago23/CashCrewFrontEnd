@@ -1,0 +1,128 @@
+<div class="login-container">
+  <!-- Background Animation -->
+  <div class="background-animation">
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="login-content">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <h1 class="app-title">CashCrew</h1>
+      <p class="app-subtitle">Gerencie suas despesas em grupo de forma simples e eficiente</p>
+    </div>
+
+    <!-- Login Form Card -->
+    <div class="login-card">
+      <div class="card-header">
+        <h2>Bem-vindo de volta!</h2>
+        <p>Faça login para acessar sua conta</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+              <mat-icon class="field-icon">email</mat-icon>
+              Email
+            </mat-label>
+            <input matInput formControlName="email" type="email" placeholder="seu@email.com">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              <mat-icon class="error-icon">error</mat-icon>
+              Email é obrigatório
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              <mat-icon class="error-icon">error</mat-icon>
+              Email inválido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+              <mat-icon class="field-icon">lock</mat-icon>
+              Senha
+            </mat-label>
+            <input matInput formControlName="password" type="password" placeholder="Sua senha">
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              <mat-icon class="error-icon">error</mat-icon>
+              Senha é obrigatória
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+              <mat-icon class="error-icon">error</mat-icon>
+              Senha deve ter pelo menos 8 caracteres
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="login-button"
+            [disabled]="!loginForm.valid || isLoading">
+            <div class="button-content">
+              <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+              <span *ngIf="!isLoading">Entrar</span>
+              <mat-icon *ngIf="!isLoading" class="button-icon">login</mat-icon>
+            </div>
+          </button>
+
+          <!-- Botão de teste -->
+          <button
+            type="button"
+            (click)="testButton()"
+            style="margin-top: 10px; padding: 10px; background: red; color: white; border: none; border-radius: 5px; width: 100%;">
+            TESTE - Clique aqui!
+          </button>
+        </div>
+      </form>
+
+      <div class="divider">
+        <span>ou</span>
+      </div>
+
+      <div class="social-login">
+        <button mat-stroked-button class="social-button google">
+          <mat-icon>g_mobiledata</mat-icon>
+          Continuar com Google
+        </button>
+      </div>
+
+      <div class="login-footer">
+        <p>Não tem uma conta?
+          <a (click)="goToRegister()" class="register-link">
+            <mat-icon>person_add</mat-icon>
+            Registre-se
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+      <div class="feature-item">
+        <mat-icon>security</mat-icon>
+        <span>Seguro e confiável</span>
+      </div>
+      <div class="feature-item">
+        <mat-icon>speed</mat-icon>
+        <span>Rápido e fácil</span>
+      </div>
+      <div class="feature-item">
+        <mat-icon>support_agent</mat-icon>
+        <span>Suporte 24/7</span>
+      </div>
+    </div>
+  </div>
+</div>

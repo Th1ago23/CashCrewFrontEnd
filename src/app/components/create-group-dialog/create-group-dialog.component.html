@@ -1,0 +1,46 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Criar Novo Grupo</h2>
+      <button mat-icon-button (click)="onCancel()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="groupForm" (ngSubmit)="onSubmit()" class="dialog-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nome do Grupo</mat-label>
+        <input matInput formControlName="name" placeholder="Digite o nome do grupo" maxlength="75">
+        <mat-hint>{{ groupForm.get('name')?.value?.length || 0 }}/75</mat-hint>
+        <mat-error *ngIf="groupForm.get('name')?.hasError('required')">
+          Nome do grupo é obrigatório
+        </mat-error>
+        <mat-error *ngIf="groupForm.get('name')?.hasError('maxlength')">
+          Nome deve ter no máximo 75 caracteres
+        </mat-error>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="isPublic" class="full-width">
+        Grupo público (visível para outros usuários)
+      </mat-checkbox>
+
+      <div class="dialog-actions">
+        <button 
+          mat-button 
+          type="button" 
+          (click)="onCancel()"
+          [disabled]="isLoading">
+          Cancelar
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="!groupForm.valid || isLoading">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">Criar Grupo</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
