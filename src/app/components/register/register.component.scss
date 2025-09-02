@@ -529,3 +529,105 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
   }
 }
 
+// Estilos específicos para o calendário
+.mat-datepicker-content {
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  .mat-calendar {
+    border-radius: 16px;
+
+    .mat-calendar-header {
+      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      color: white;
+      border-radius: 16px 16px 0 0;
+
+      .mat-calendar-controls {
+        .mat-calendar-period-button {
+          color: white;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+          }
+        }
+
+        .mat-calendar-previous-button,
+        .mat-calendar-next-button {
+          color: white;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+    }
+
+    .mat-calendar-body {
+      .mat-calendar-body-cell {
+        .mat-calendar-body-cell-content {
+          border-radius: 50%;
+
+          &:hover {
+            background: rgba(16, 185, 129, 0.1);
+          }
+        }
+
+        &.mat-calendar-body-selected .mat-calendar-body-cell-content {
+          background: $primary-color;
+          color: white;
+        }
+
+        &.mat-calendar-body-today .mat-calendar-body-cell-content {
+          border: 2px solid $primary-color;
+        }
+      }
+    }
+  }
+}
+
+// Melhorias no layout dos campos
+.form-group {
+  margin-bottom: 20px;
+
+  .mat-mdc-form-field {
+    .mat-mdc-form-field-wrapper {
+      padding-bottom: 0;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    .mat-mdc-form-field-hint-wrapper,
+    .mat-mdc-form-field-error-wrapper {
+      padding: 0;
+      margin-top: 4px;
+    }
+  }
+}
+
+// Ajustes para o grid responsivo
+.form-row {
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+  }
+}
+
+// Ajustes para campos em mobile
+@media (max-width: 480px) {
+  .form-row {
+    gap: 16px !important;
+  }
+
+  .form-group .mat-mdc-form-field {
+    .mat-mdc-form-field-flex {
+      min-height: 52px;
+    }
+  }
+}
+

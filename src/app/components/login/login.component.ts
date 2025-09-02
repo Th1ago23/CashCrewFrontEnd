@@ -7,9 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -34,11 +34,11 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private notificationService: NotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -52,11 +52,9 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login bem-sucedido:', response);
           this.router.navigate(['/dashboard']);
-          this.snackBar.open('Login realizado com sucesso!', 'Fechar', {
-            duration: 3000
-          });
+          this.notificationService.success('Login realizado com sucesso! 🎉');
         },
-                error: (error) => {
+        error: (error) => {
           console.log('Erro no login:', error);
           console.log('Status:', error.status);
           console.log('Mensagem:', error.error);
@@ -68,9 +66,7 @@ export class LoginComponent {
             errorMessage = error.error.message;
           }
 
-          this.snackBar.open(errorMessage, 'Fechar', {
-            duration: 4000
-          });
+          this.notificationService.error(errorMessage);
         },
         complete: () => {
           console.log('Login completado com sucesso');
@@ -81,10 +77,5 @@ export class LoginComponent {
 
   goToRegister(): void {
     this.router.navigate(['/register']);
-  }
-
-  testButton(): void {
-    console.log('Botão de teste clicado!');
-    alert('Botão de teste funcionando!');
   }
 }

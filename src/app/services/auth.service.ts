@@ -1,90 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, map } from 'rxjs';
-import { User, UserLogin, UserRegister, AuthResponse } from '../models/user.model';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { User, UserLogin, UserRegister, UserResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = '/api';
+  private readonly API_URL = '/api/Auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.loadStoredUser();
+    this.loadCurrentUser();
   }
 
-  private loadStoredUser(): void {
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        this.currentUserSubject.next(user);
-      } catch (error) {
-        this.clearStoredData();
-      }
-    }
-  }
-
-                  login(credentials: UserLogin): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/Auth/Login`, credentials)
+  login(credentials: UserLogin): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${this.API_URL}/Login`, credentials)
       .pipe(
-        map(response => {
-          console.log('Resposta do login (JSON):', response);
-
-          // O backend retorna { "token": "JWT" }
-          const token = response.token;
-
-          if (token && token.startsWith('eyJ')) {
-            localStorage.setItem('token', token);
-
-            // Decodificar o JWT para obter informações do usuário
-            try {
-              const payload = JSON.parse(atob(token.split('.')[1]));
-              console.log('Payload do JWT:', payload);
-
-              const user: User = {
-                id: parseInt(payload.nameid),
-                email: payload.email,
-                username: payload.email.split('@')[0], // Fallback para username
-                fullName: payload.email.split('@')[0], // Fallback para fullName
-                birthday: new Date() // Fallback para birthday
-              };
-
-              localStorage.setItem('user', JSON.stringify(user));
-              this.currentUserSubject.next(user);
-
-              console.log('Usuário logado:', user);
-
-              // Retornar o usuário para o componente
-              return { success: true, user, token };
-            } catch (error) {
-              console.error('Erro ao decodificar JWT:', error);
-              throw new Error('Token JWT inválido');
-            }
-          } else {
-            console.error('Token JWT não encontrado na resposta:', response);
-            throw new Error('Token não encontrado na resposta');
-          }
+        tap(response => {
+          localStorage.setItem('token', response.token);
+          this.decodeAndSetUser(response.token);
         })
       );
   }
 
-  register(userData: UserRegister): Observable<User> {
-    return this.http.post<User>(`${this.API_URL}/Auth/Register`, userData);
+  register(userData: UserRegister): Observable<any> {
+    return this.http.post(`${this.API_URL}/Register`, userData);
   }
 
   logout(): void {
-    this.clearStoredData();
+    localStorage.removeItem('token');
     this.currentUserSubject.next(null);
   }
 
-  private clearStoredData(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
   getToken(): string | null {
@@ -95,7 +46,31 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+  private decodeAndSetUser(token: string): void {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('JWT Payload:', payload);
+
+      const user: User = {
+        id: payload.userId || payload.sub || payload.nameid,
+        email: payload.email || payload.unique_name,
+        username: payload.username || payload.preferred_username || payload.email?.split('@')[0],
+        fullName: payload.fullName || payload.name || payload.given_name || payload.email?.split('@')[0],
+        birthDay: new Date(payload.birthDay || payload.birthdate || Date.now())
+      };
+
+      console.log('Usuário decodificado:', user);
+      this.currentUserSubject.next(user);
+    } catch (error) {
+      console.error('Erro ao decodificar token:', error);
+      this.logout();
+    }
+  }
+
+  private loadCurrentUser(): void {
+    const token = this.getToken();
+    if (token) {
+      this.decodeAndSetUser(token);
+    }
   }
 }

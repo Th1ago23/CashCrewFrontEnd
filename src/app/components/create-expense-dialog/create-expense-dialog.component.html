@@ -1,0 +1,146 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h2>Nova Despesa</h2>
+          <p class="group-name">{{ group.name }}</p>
+        </div>
+        <button mat-icon-button (click)="onCancel()" class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="dialog-form">
+      <!-- Descrição da Despesa -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição da Despesa</mat-label>
+        <input matInput formControlName="description" placeholder="Ex: Almoço, Uber, Conta de luz..." maxlength="100">
+        <mat-hint>{{ expenseForm.get('description')?.value?.length || 0 }}/100</mat-hint>
+        <mat-error *ngIf="expenseForm.get('description')?.hasError('required')">
+          Descrição é obrigatória
+        </mat-error>
+        <mat-error *ngIf="expenseForm.get('description')?.hasError('maxlength')">
+          Descrição deve ter no máximo 100 caracteres
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Valor da Despesa -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Valor (R$)</mat-label>
+        <input matInput type="number" formControlName="value" placeholder="0,00" step="0.01" min="0.01">
+        <mat-icon matSuffix>attach_money</mat-icon>
+        <mat-error *ngIf="expenseForm.get('value')?.hasError('required')">
+          Valor é obrigatório
+        </mat-error>
+        <mat-error *ngIf="expenseForm.get('value')?.hasError('min')">
+          Valor deve ser maior que zero
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Data da Despesa -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data da Despesa</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="expenseForm.get('date')?.hasError('required')">
+          Data é obrigatória
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Quem Pagou -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Quem Pagou</mat-label>
+        <mat-select formControlName="paidByUserId">
+          <mat-option *ngFor="let user of availableParticipants" [value]="user.id">
+            {{ user.fullName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="expenseForm.get('paidByUserId')?.hasError('required')">
+          Selecione quem pagou
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Participantes -->
+      <div class="participants-section">
+        <h3>Participantes da Despesa</h3>
+        <p class="section-description">Selecione quem deve dividir esta despesa:</p>
+
+        <div class="participants-grid">
+          <div
+            *ngFor="let user of availableParticipants"
+            class="participant-item"
+            [class.selected]="isParticipantSelected(user.id)"
+            (click)="toggleParticipant(user.id)">
+            <div class="participant-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="participant-info">
+              <span class="participant-name">{{ user.fullName }}</span>
+              <span class="participant-status">
+                {{ isParticipantSelected(user.id) ? 'Selecionado' : 'Clique para selecionar' }}
+              </span>
+            </div>
+            <div class="participant-checkbox">
+              <mat-icon *ngIf="isParticipantSelected(user.id)" class="check-icon">
+                check_circle
+              </mat-icon>
+              <mat-icon *ngIf="!isParticipantSelected(user.id)" class="uncheck-icon">
+                radio_button_unchecked
+              </mat-icon>
+            </div>
+          </div>
+        </div>
+
+        <mat-error *ngIf="expenseForm.get('participantsIds')?.hasError('required')" class="participants-error">
+          Selecione pelo menos um participante
+        </mat-error>
+      </div>
+
+      <!-- Resumo da Despesa -->
+      <div class="expense-summary" *ngIf="expenseForm.get('value')?.value && expenseForm.get('participantsIds')?.value?.length">
+        <h3>Resumo da Divisão</h3>
+        <div class="summary-content">
+          <div class="summary-item">
+            <span class="summary-label">Valor Total:</span>
+            <span class="summary-value">R$ {{ expenseForm.get('value')?.value | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Participantes:</span>
+            <span class="summary-value">{{ expenseForm.get('participantsIds')?.value?.length }}</span>
+          </div>
+          <div class="summary-item highlight">
+            <span class="summary-label">Valor por Pessoa:</span>
+            <span class="summary-value">R$ {{ (expenseForm.get('value')?.value / expenseForm.get('participantsIds')?.value?.length) | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="dialog-actions">
+        <button
+          mat-button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="isLoading"
+          class="cancel-button">
+          Cancelar
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!expenseForm.valid || isLoading"
+          class="submit-button">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">
+            <mat-icon>add</mat-icon>
+            Criar Despesa
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

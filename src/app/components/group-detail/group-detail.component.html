@@ -1,19 +1,25 @@
 <div class="group-detail-container">
-  <!-- Header -->
+  <!-- Header com gradiente -->
   <header class="group-header">
+    <div class="header-background"></div>
     <div class="header-content">
       <button mat-icon-button (click)="goBack()" class="back-button">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      
+
       <div class="group-info">
-        <h1>{{ groupBalance?.groupName || 'Carregando...' }}</h1>
-        <p>Gerenciando despesas e balanços</p>
+        <div class="group-avatar">
+          <mat-icon>group</mat-icon>
+        </div>
+        <div class="group-details">
+          <h1>{{ group?.name || 'Carregando...' }}</h1>
+          <p class="group-subtitle">Gerenciando despesas e balanços</p>
+        </div>
       </div>
-      
-      <button 
-        mat-raised-button 
-        color="primary" 
+
+      <button
+        mat-raised-button
+        color="primary"
         (click)="openCreateExpenseDialog()"
         class="create-expense-button">
         <mat-icon>add</mat-icon>
@@ -25,113 +31,269 @@
   <!-- Main Content -->
   <main class="group-main">
     <div *ngIf="isLoading" class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Carregando dados do grupo...</p>
+      <div class="loading-content">
+        <mat-spinner diameter="50"></mat-spinner>
+        <h3>Carregando dados do grupo...</h3>
+        <p>Aguarde um momento</p>
+      </div>
     </div>
 
-    <div *ngIf="!isLoading && groupBalance" class="group-content">
-      <!-- Summary Cards -->
-      <div class="summary-cards">
-        <mat-card class="summary-card total-card">
-          <mat-card-content>
-            <h3>Total de Despesas</h3>
-            <p class="amount">{{ formatCurrency(groupBalance.totalExpenses) }}</p>
-          </mat-card-content>
-        </mat-card>
+    <div *ngIf="!isLoading && group" class="group-content">
+      <!-- Cards de Estatísticas -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon members">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3>{{ (group.users && group.users.length) || 0 }}</h3>
+            <p>Membros</p>
+          </div>
+        </div>
 
-        <mat-card class="summary-card">
-          <mat-card-content>
-            <h3>Total de Despesas</h3>
-            <p class="count">{{ groupBalance.expenses.length }}</p>
-          </mat-card-content>
-        </mat-card>
+        <div class="stat-card">
+          <div class="stat-icon expenses">
+            <mat-icon>receipt</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3>{{ groupBalance?.expenses?.length || 0 }}</h3>
+            <p>Despesas</p>
+          </div>
+        </div>
 
-        <mat-card class="summary-card">
-          <mat-card-content>
-            <h3>Membros</h3>
-            <p class="count">{{ groupBalance.memberBalances.length }}</p>
-          </mat-card-content>
-        </mat-card>
+        <div class="stat-card">
+          <div class="stat-icon total">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3>{{ formatCurrency(groupBalance?.totalExpenses || 0) }}</h3>
+            <p>Total Gasto</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon balance">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3>{{ groupBalance?.debts?.length || 0 }}</h3>
+            <p>Transações</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Member Balances -->
-      <mat-card class="balance-card">
-        <mat-card-header>
-          <mat-card-title>Balanço dos Membros</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="member-balances">
-            <div 
-              *ngFor="let member of groupBalance.memberBalances" 
-              class="member-balance"
-              [ngClass]="getBalanceColor(member.balance)">
-              <div class="member-info">
-                <span class="member-name">{{ member.userName }}</span>
-                <span class="member-amount">{{ formatCurrency(member.balance) }}</span>
+      <!-- Tabs de Funcionalidades -->
+      <div class="tabs-section">
+        <mat-card class="tabs-card">
+          <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="activeTab">
+
+            <!-- Tab: Visão Geral -->
+            <mat-tab label="Visão Geral">
+              <div class="tab-content">
+                <div class="overview-grid">
+                  <!-- Balanço do Usuário Atual -->
+                  <mat-card class="balance-card" *ngIf="getCurrentUserBalance()">
+                    <mat-card-header>
+                      <mat-card-title>Seu Balanço</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div class="balance-display">
+                        <div class="balance-amount" [class]="getBalanceColor(getCurrentUserBalance()!.balance)">
+                          {{ formatCurrency(getCurrentUserBalance()!.balance) }}
+                        </div>
+                        <div class="balance-status">
+                          {{ getBalanceText(getCurrentUserBalance()!.balance) }}
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+
+                  <!-- Resumo de Dívidas -->
+                  <mat-card class="debts-summary-card" *ngIf="groupBalance?.debts?.length">
+                    <mat-card-header>
+                      <mat-card-title>Resumo de Transações</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div class="debts-list">
+                        <div *ngFor="let debt of groupBalance?.debts || []" class="debt-item">
+                          <div class="debt-info">
+                            <span class="from-user">{{ debt.fromUser.name }}</span>
+                            <mat-icon class="debt-arrow">arrow_forward</mat-icon>
+                            <span class="to-user">{{ debt.toUser.name }}</span>
+                          </div>
+                          <div class="debt-amount">{{ formatCurrency(debt.amount) }}</div>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
               </div>
-              <div class="member-details">
-                <small>Pago: {{ formatCurrency(member.totalPaid) }}</small>
-                <small>Devido: {{ formatCurrency(member.totalOwed) }}</small>
+            </mat-tab>
+
+            <!-- Tab: Despesas -->
+            <mat-tab label="Despesas">
+              <div class="tab-content">
+                <div *ngIf="isLoadingExpenses" class="loading-expenses">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <p>Carregando despesas...</p>
+                </div>
+
+                <div *ngIf="!isLoadingExpenses && groupBalance?.expenses?.length" class="expenses-section">
+                  <div class="expenses-header">
+                    <h3>Histórico de Despesas</h3>
+                    <p>Total: {{ formatCurrency(groupBalance?.totalExpenses || 0) }}</p>
+                  </div>
+
+                  <div class="expenses-grid">
+                    <mat-card *ngFor="let expense of groupBalance?.expenses || []" class="expense-card">
+                      <mat-card-header>
+                        <div class="expense-header-content">
+                          <div class="expense-icon">
+                            <mat-icon>receipt</mat-icon>
+                          </div>
+                          <div class="expense-info">
+                            <h4>{{ expense.description }}</h4>
+                            <p class="expense-date">{{ formatDate(expense.date) }}</p>
+                          </div>
+                          <div class="expense-amount">
+                            {{ formatCurrency(expense.value) }}
+                          </div>
+                        </div>
+                      </mat-card-header>
+                      <mat-card-content>
+                        <div class="expense-details">
+                          <div class="expense-detail-item">
+                            <span class="detail-label">Pago por:</span>
+                            <span class="detail-value">{{ expense.user.name }}</span>
+                          </div>
+                          <div class="expense-detail-item">
+                            <span class="detail-label">Participantes:</span>
+                            <span class="detail-value">{{ expense.users.length }}</span>
+                          </div>
+                          <div class="expense-detail-item">
+                            <span class="detail-label">Valor por pessoa:</span>
+                            <span class="detail-value">{{ formatCurrency(expense.value / expense.users.length) }}</span>
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+
+                <div *ngIf="!isLoadingExpenses && (!groupBalance?.expenses || groupBalance?.expenses?.length === 0)" class="no-expenses">
+                  <mat-icon class="no-expenses-icon">receipt</mat-icon>
+                  <h3>Nenhuma despesa registrada</h3>
+                  <p>Seja o primeiro a criar uma despesa no grupo!</p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="openCreateExpenseDialog()"
+                    class="create-first-expense-button">
+                    <mat-icon>add</mat-icon>
+                    Criar Primeira Despesa
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+            </mat-tab>
 
-      <!-- Expenses Table -->
-      <mat-card class="expenses-card">
-        <mat-card-header>
-          <mat-card-title>Histórico de Despesas</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="groupBalance.expenses.length === 0" class="empty-expenses">
-            <mat-icon>receipt</mat-icon>
-            <p>Nenhuma despesa registrada ainda</p>
-            <button 
-              mat-raised-button 
-              color="primary" 
-              (click)="openCreateExpenseDialog()">
-              Criar Primeira Despesa
-            </button>
-          </div>
+            <!-- Tab: Balanços -->
+            <mat-tab label="Balanços">
+              <div class="tab-content">
+                <div *ngIf="groupBalance?.memberBalances?.length" class="balances-section">
+                  <div class="balances-header">
+                    <h3>Balanço de Cada Membro</h3>
+                    <p>Valores positivos = deve receber, Valores negativos = deve pagar</p>
+                  </div>
 
-          <table *ngIf="groupBalance.expenses.length > 0" mat-table [dataSource]="groupBalance.expenses" class="expenses-table">
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef>Descrição</th>
-              <td mat-cell *matCellDef="let expense">{{ expense.description }}</td>
-            </ng-container>
+                  <div class="balances-grid">
+                    <mat-card *ngFor="let memberBalance of groupBalance?.memberBalances || []" class="balance-card">
+                      <mat-card-content>
+                        <div class="member-balance-content">
+                          <div class="member-info">
+                            <div class="member-avatar">
+                              <mat-icon>person</mat-icon>
+                            </div>
+                            <div class="member-details">
+                              <h4>{{ memberBalance.user.name }}</h4>
+                              <span class="member-status">Membro</span>
+                            </div>
+                          </div>
+                          <div class="balance-info">
+                            <div class="balance-amount" [class]="getBalanceColor(memberBalance.balance)">
+                              {{ formatCurrency(memberBalance.balance) }}
+                            </div>
+                            <div class="balance-status">
+                              {{ getBalanceText(memberBalance.balance) }}
+                            </div>
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
 
-            <ng-container matColumnDef="value">
-              <th mat-header-cell *matHeaderCellDef>Valor</th>
-              <td mat-cell *matCellDef="let expense">{{ formatCurrency(expense.value) }}</td>
-            </ng-container>
+                <div *ngIf="!groupBalance?.memberBalances?.length" class="no-balances">
+                  <mat-icon class="no-balances-icon">account_balance_wallet</mat-icon>
+                  <h3>Nenhum balanço disponível</h3>
+                  <p>As despesas aparecerão aqui quando forem criadas</p>
+                </div>
+              </div>
+            </mat-tab>
 
-            <ng-container matColumnDef="paidBy">
-              <th mat-header-cell *matHeaderCellDef>Pago por</th>
-              <td mat-cell *matCellDef="let expense">{{ expense.paidByUser?.fullName || 'N/A' }}</td>
-            </ng-container>
+            <!-- Tab: Histórico -->
+            <mat-tab label="Histórico">
+              <div class="tab-content">
+                <div *ngIf="groupBalance?.expenses?.length" class="history-section">
+                  <div class="history-header">
+                    <h3>Histórico de Transações</h3>
+                    <p>Timeline completa de todas as atividades do grupo</p>
+                  </div>
 
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef>Data</th>
-              <td mat-cell *matCellDef="let expense">{{ formatDate(expense.date) }}</td>
-            </ng-container>
+                  <div class="timeline">
+                    <div *ngFor="let expense of groupBalance?.expenses || []; let i = index" class="timeline-item">
+                      <div class="timeline-marker">
+                        <mat-icon>event</mat-icon>
+                      </div>
+                      <div class="timeline-content">
+                        <div class="timeline-header">
+                          <h4>{{ expense.description }}</h4>
+                          <span class="timeline-date">{{ formatDate(expense.date) }}</span>
+                        </div>
+                        <div class="timeline-details">
+                          <p><strong>{{ expense.user.name }}</strong> pagou {{ formatCurrency(expense.value) }}</p>
+                          <p>Dividido entre {{ expense.users.length }} pessoa(s)</p>
+                          <div class="participants-list">
+                            <span class="participants-label">Participantes:</span>
+                            <span *ngFor="let user of expense.users; let last = last">
+                              {{ user.name }}{{ !last ? ', ' : '' }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <ng-container matColumnDef="participants">
-              <th mat-header-cell *matHeaderCellDef>Participantes</th>
-              <td mat-cell *matCellDef="let expense">
-                <mat-chip-set>
-                  <mat-chip *ngFor="let participant of expense.participants" size="small">
-                    {{ participant.fullName }}
-                  </mat-chip>
-                </mat-chip-set>
-              </td>
-            </ng-container>
+                <div *ngIf="!groupBalance?.expenses?.length" class="no-history">
+                  <mat-icon class="no-history-icon">history</mat-icon>
+                  <h3>Nenhum histórico disponível</h3>
+                  <p>O histórico de transações aparecerá aqui quando as despesas forem criadas</p>
+                </div>
+              </div>
+            </mat-tab>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </mat-card-content>
-      </mat-card>
+          </mat-tab-group>
+        </mat-card>
+      </div>
     </div>
   </main>
+
+  <!-- Create Expense Dialog -->
+  <app-create-expense-dialog
+    *ngIf="showCreateExpenseDialog"
+    [group]="group!"
+    [currentUser]="currentUser!"
+    (expenseCreated)="onExpenseCreated($event)"
+    (closed)="showCreateExpenseDialog = false">
+  </app-create-expense-dialog>
 </div>

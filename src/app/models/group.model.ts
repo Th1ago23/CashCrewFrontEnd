@@ -1,11 +1,12 @@
-import { User } from "./user.model";
+import { UserSummary } from "./user.model";
+import { ExpenseDetail } from "./expense.model";
 
 export interface Group {
   id: number;
   name: string;
-  leaderId: number;
   isPublic: boolean;
-  members?: User[];
+  leaderId: number;
+  users: UserSummary[];
 }
 
 export interface GroupCreate {
@@ -14,11 +15,22 @@ export interface GroupCreate {
 }
 
 export interface GroupMember {
-  groupId: number;
-  userEmail: string;
+  id: number;
+  username: string;
+  fullName: string;
+  email: string;
 }
 
 export interface GroupRename {
-  groupId: number;
-  newName: string;
+  name: string;
+}
+
+// Corresponde ao GroupSummaryDTO do backend
+export interface GroupSummary {
+  id: number;        // ✅ Agora o backend retorna o ID
+  name: string;
+  leaderId: number;
+  users: UserSummary[];
+  isPublic: boolean;
+  expenses: ExpenseDetail[];
 }

@@ -10,9 +10,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -42,15 +42,15 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private notificationService: NotificationService
   ) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      emailAddress: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
       username: ['', [Validators.required, Validators.minLength(3)]],
-      fullName: ['', [Validators.required, Validators.minLength(2)]],
-      birthday: ['', [Validators.required]],
+      fullname: ['', [Validators.required, Validators.minLength(2)]],
+      birthDay: ['', [Validators.required]],
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -84,19 +84,15 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       const formValue = this.registerForm.value;
 
-      if (!this.validateAge(formValue.birthday)) {
-        this.snackBar.open('Idade mínima é 12 anos', 'Fechar', {
-          duration: 3000
-        });
+      if (!this.validateAge(formValue.birthDay)) {
+        this.notificationService.warning('Idade mínima é 12 anos');
         return;
       }
 
       this.isLoading = true;
       this.authService.register(formValue).subscribe({
         next: () => {
-          this.snackBar.open('Conta criada com sucesso! Faça login para continuar.', 'Fechar', {
-            duration: 4000
-          });
+          this.notificationService.success('Conta criada com sucesso! Faça login para continuar. 🎉');
           this.router.navigate(['/login']);
         },
         error: (error) => {
@@ -107,9 +103,7 @@ export class RegisterComponent {
             errorMessage = error.error.message;
           }
 
-          this.snackBar.open(errorMessage, 'Fechar', {
-            duration: 4000
-          });
+          this.notificationService.error(errorMessage);
         }
       });
     }
@@ -117,10 +111,5 @@ export class RegisterComponent {
 
   goToLogin(): void {
     this.router.navigate(['/login']);
-  }
-
-  testButton(): void {
-    console.log('Botão de teste clicado!');
-    alert('Botão de teste funcionando!');
   }
 }

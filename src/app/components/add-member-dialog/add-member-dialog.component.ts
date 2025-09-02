@@ -6,10 +6,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { GroupService } from '../../services/group.service';
-import { Group } from '../../models/group.model';
+import { NotificationService } from '../../services/notification.service';
+import { ModalService } from '../../services/modal.service';
+import { GroupSummary } from '../../models/group.model';
 
 @Component({
   selector: 'app-add-member-dialog',
@@ -27,15 +28,16 @@ import { Group } from '../../models/group.model';
   styleUrls: ['./add-member-dialog.component.scss']
 })
 export class AddMemberDialogComponent {
-  @Input() group!: Group;
-  
+  @Input() group!: GroupSummary;
+
   memberForm: FormGroup;
   isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private groupService: GroupService,
-    private snackBar: MatSnackBar
+    private notificationService: NotificationService,
+    private modalService: ModalService
   ) {
     this.memberForm = this.fb.group({
       userEmail: ['', [Validators.required, Validators.email]]
@@ -46,33 +48,26 @@ export class AddMemberDialogComponent {
     if (this.memberForm.valid) {
       this.isLoading = true;
       const email = this.memberForm.get('userEmail')?.value;
-      
-      this.groupService.addMember(this.group.id, email).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.snackBar.open('Membro adicionado com sucesso!', 'Fechar', {
-            duration: 3000
-          });
-          this.memberAdded.emit();
-        },
-        error: (error) => {
-          this.isLoading = false;
-          let errorMessage = 'Erro ao adicionar membro.';
-          
-          if (error.error && error.error.message) {
-            errorMessage = error.error.message;
-          }
-          
-          this.snackBar.open(errorMessage, 'Fechar', {
-            duration: 4000
-          });
-        }
-      });
+
+      // Como não temos ID, vamos usar o nome do grupo
+      // Por enquanto, vamos mostrar uma mensagem informativa
+      this.isLoading = false;
+      this.notificationService.info('Funcionalidade de adicionar membro será implementada em breve');
+
+      // Emitir evento para o componente pai
+      this.memberAdded.emit();
+
+      // Fechar o modal usando o ModalService
+      this.closeModal();
     }
   }
 
   onCancel(): void {
-    this.closed.emit();
+    this.closeModal();
+  }
+
+  private closeModal(): void {
+    this.modalService.closeAddMemberDialog();
   }
 
   // Event emitters

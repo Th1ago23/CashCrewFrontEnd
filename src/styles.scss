@@ -205,3 +205,85 @@ body {
   }
 }
 
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Estilos personalizados para as notificações
+.success-snackbar {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+
+  .mat-simple-snackbar-action {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+}
+
+.error-snackbar {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3) !important;
+
+  .mat-simple-snackbar-action {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+}
+
+.info-snackbar {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+
+  .mat-simple-snackbar-action {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+}
+
+.warning-snackbar {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3) !important;
+
+  .mat-simple-snackbar-action {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+}
+
+// Melhorias gerais para o Material Design
+.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Ajustes para o corpo da notificação
+.mat-mdc-snack-bar-container .mdc-snackbar__surface .mdc-snackbar__label {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+// Ajustes para o botão de ação
+.mat-mdc-snack-bar-container .mdc-snackbar__surface .mdc-snackbar__actions {
+  .mdc-button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    padding: 8px 16px !important;
+    min-width: 80px !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+}
+

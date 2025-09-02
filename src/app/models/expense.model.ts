@@ -1,37 +1,58 @@
 import { User } from "./user.model";
+import { Group } from "./group.model";
 
 export interface Expense {
   id: number;
-  value: number;
   description: string;
+  value: number;
   date: Date;
-  paidByUserId?: number;
   groupId: number;
-  participants?: User[];
-  paidByUser?: User;
+  paidByUserId: number;
+  participants: UserSummary[];
+  paidByUser?: UserSummary;
 }
 
 export interface ExpenseCreate {
   value: number;
   description: string;
   date: Date;
-  paidByUserId?: number;
-  groupId: number;
-  participantIds: number[];
+  paidByUserId: number;
+  participantsIds: number[];
 }
 
-export interface GroupBalance {
-  groupId: number;
-  groupName: string;
-  expenses: Expense[];
-  totalExpenses: number;
-  memberBalances: MemberBalance[];
+// Corresponde ao ExpenseDetailDTO do backend
+export interface ExpenseDetail {
+  description: string;
+  value: number;
+  date: Date;
+  user: UserSummary; // Quem pagou
+  users: UserSummary[]; // Participantes
+  dto: Group;         // ✅ Agora usa Group que tem ID
+}
+
+export interface UserSummary {
+  id: number;        // ✅ Agora o backend retorna o ID
+  name: string;
+}
+
+export interface Debt {
+  fromUser: UserSummary;
+  toUser: UserSummary;
+  amount: number;
 }
 
 export interface MemberBalance {
-  userId: number;
+  user: UserSummary;
   userName: string;
+  balance: number;
   totalPaid: number;
   totalOwed: number;
-  balance: number;
+}
+
+// Corresponde ao GroupBalanceDTO do backend
+export interface GroupBalance {
+  debts: Debt[];
+  memberBalances: MemberBalance[];
+  expenses?: ExpenseDetail[];
+  totalExpenses?: number;
 }

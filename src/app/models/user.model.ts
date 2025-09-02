@@ -3,7 +3,7 @@ export interface User {
   email: string;
   username: string;
   fullName: string;
-  birthday: Date;
+  birthDay: Date;
 }
 
 export interface UserLogin {
@@ -12,14 +12,21 @@ export interface UserLogin {
 }
 
 export interface UserRegister {
-  email: string;
+  emailAddress: string;
   password: string;
   username: string;
-  fullName: string;
-  birthday: Date;
+  fullname: string;
+  birthDay: Date;
 }
 
-export interface AuthResponse {
-  token: string;
-  user: User;
+export interface UserResponse {
+  id: number;
+  email: string;
+  username: string;
+}
+
+// Corresponde ao UserSummaryDTO do backend
+export interface UserSummary {
+  id: number;        // ✅ Agora o backend retorna o ID
+  name: string;
 }
