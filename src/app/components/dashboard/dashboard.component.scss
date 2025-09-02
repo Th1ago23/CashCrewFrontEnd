@@ -20,11 +20,70 @@
     z-index: 1;
   }
 
+<<<<<<< HEAD
   .header-content {
     position: relative;
     z-index: 2;
     max-width: 1200px;
     margin: 0 auto;
+=======
+  p {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .welcome-text {
+    color: #333;
+    font-weight: 500;
+  }
+
+  .user-menu-button {
+    color: #667eea;
+  }
+}
+
+.dashboard-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h2 {
+    margin: 0;
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .test-api-button {
+    height: 48px;
+    padding: 0 20px;
+    font-weight: 500;
+    border-radius: 8px;
+  }
+
+  .create-group-button {
+    height: 48px;
+>>>>>>> 4a9a77a453882c4ed4190880720329e2c3983784
     padding: 0 24px;
     display: flex;
     justify-content: space-between;
@@ -543,6 +602,11 @@
     .header-stats {
       flex-direction: column;
       gap: 16px;
+    }
+
+    .header-actions {
+      flex-direction: column;
+      gap: 12px;
     }
   }
 

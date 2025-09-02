@@ -5,8 +5,15 @@ export interface Group {
   id: number;
   name: string;
   isPublic: boolean;
+<<<<<<< HEAD
   leaderId: number;
   users: UserSummary[];
+=======
+  members?: User[];
+  memberCount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+>>>>>>> 4a9a77a453882c4ed4190880720329e2c3983784
 }
 
 export interface GroupCreate {
