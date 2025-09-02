@@ -18,52 +18,9 @@ export class AuthService {
   login(credentials: UserLogin): Observable<{ token: string }> {
     return this.http.post<{ token: string }>(`${this.API_URL}/Login`, credentials)
       .pipe(
-<<<<<<< HEAD
         tap(response => {
           localStorage.setItem('token', response.token);
           this.decodeAndSetUser(response.token);
-=======
-        map(response => {
-          console.log('🔐 Resposta do login (JSON):', response);
-
-          // O backend retorna { "token": "JWT" }
-          const token = response.token;
-
-          if (token && token.startsWith('eyJ')) {
-            console.log('✅ Token JWT válido encontrado, armazenando...');
-            localStorage.setItem('token', token);
-            console.log('💾 Token armazenado no localStorage');
-
-            // Decodificar o JWT para obter informações do usuário
-            try {
-              const payload = JSON.parse(atob(token.split('.')[1]));
-              console.log('🔍 Payload do JWT:', payload);
-
-              const user: User = {
-                id: parseInt(payload.nameid),
-                email: payload.email,
-                username: payload.email.split('@')[0], // Fallback para username
-                fullName: payload.email.split('@')[0], // Fallback para fullName
-                birthday: new Date() // Fallback para birthday
-              };
-
-              localStorage.setItem('user', JSON.stringify(user));
-              this.currentUserSubject.next(user);
-
-              console.log('👤 Usuário logado:', user);
-              console.log('🔑 Token armazenado:', this.getToken());
-
-              // Retornar o usuário para o componente
-              return { success: true, user, token };
-            } catch (error) {
-              console.error('❌ Erro ao decodificar JWT:', error);
-              throw new Error('Token JWT inválido');
-            }
-          } else {
-            console.error('❌ Token JWT não encontrado na resposta:', response);
-            throw new Error('Token não encontrado na resposta');
-          }
->>>>>>> 4a9a77a453882c4ed4190880720329e2c3983784
         })
       );
   }
