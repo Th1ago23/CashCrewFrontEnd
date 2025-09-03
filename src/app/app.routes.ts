@@ -21,5 +21,9 @@ export const routes: Routes = [
     loadComponent: () => import('./components/group-detail/group-detail.component').then(m => m.GroupDetailComponent),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'join/:token',
+    loadComponent: () => import('./components/join-group/join-group.component').then(m => m.JoinGroupComponent)
+  },
   { path: '**', redirectTo: '/dashboard' }
 ];

@@ -31,10 +31,10 @@ export class LoginComponent {
   isLoading = false;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private notificationService: NotificationService
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly notificationService: NotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -51,6 +51,7 @@ export class LoginComponent {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           console.log('Login bem-sucedido:', response);
+          this.isLoading = false;
           this.router.navigate(['/dashboard']);
           this.notificationService.success('Login realizado com sucesso! 🎉');
         },
@@ -62,7 +63,7 @@ export class LoginComponent {
           this.isLoading = false;
           let errorMessage = 'Erro no login. Verifique suas credenciais.';
 
-          if (error.error && error.error.message) {
+          if (error.error?.message) {
             errorMessage = error.error.message;
           }
 

@@ -1,0 +1,80 @@
+<div class="invite-dialog-overlay" (click)="close()">
+  <div class="invite-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Convidar para o Grupo</h2>
+      <button mat-icon-button (click)="close()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <div *ngIf="group" class="group-info">
+        <h3>{{ group.name }}</h3>
+        <p>Gerar um convite para este grupo</p>
+      </div>
+
+      <form [formGroup]="inviteForm" (ngSubmit)="generateInvite()" *ngIf="!generatedToken">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tempo de expiração</mat-label>
+          <mat-select formControlName="expirationTime">
+            <mat-option *ngFor="let option of expirationOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!inviteForm.valid || isLoading"
+            class="generate-button">
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            <mat-icon *ngIf="!isLoading">link</mat-icon>
+            {{ isLoading ? 'Gerando...' : 'Gerar Convite' }}
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="generatedToken" class="invite-result">
+        <div class="success-message">
+          <mat-icon class="success-icon">check_circle</mat-icon>
+          <h3>Convite gerado com sucesso!</h3>
+          <p>Compartilhe este link com as pessoas que deseja convidar:</p>
+        </div>
+
+        <div class="invite-link-container">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Link do convite</mat-label>
+            <input matInput [value]="inviteUrl" readonly>
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="copyToClipboard()"
+              matTooltip="Copiar link">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        <div class="result-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="copyToClipboard()"
+            class="copy-button">
+            <mat-icon>content_copy</mat-icon>
+            Copiar Link
+          </button>
+          <button
+            mat-stroked-button
+            (click)="close()"
+            class="close-result-button">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

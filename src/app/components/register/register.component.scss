@@ -1,7 +1,7 @@
 // Variables
-$primary-color: #10b981;
-$secondary-color: #3b82f6;
-$accent-color: #06b6d4;
+$primary-color: #667eea;
+$secondary-color: #764ba2;
+$accent-color: #667eea;
 $success-color: #059669;
 $error-color: #ef4444;
 $text-primary: #1f2937;
@@ -73,7 +73,7 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
 // Main Container
 .register-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 50%, $accent-color 100%);
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
   position: relative;
   overflow: hidden;
   @include flex-center;
@@ -167,32 +167,35 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
   animation: slideInLeft 0.8s ease-out;
   text-align: center;
 
-  .logo-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, $primary-color, $secondary-color);
-    border-radius: 20px;
-    @include flex-center;
+  .logo-container {
     margin: 0 auto 24px;
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-
-    mat-icon {
-      font-size: 40px;
-      color: $white;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .app-title {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin: 0 0 16px 0;
-    color: $white;
-    letter-spacing: -1px;
-    text-align: center;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  .logo-image {
+    max-width: 600px;
+    max-height: 360px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+    }
 
     @media (max-width: 768px) {
-      font-size: 2.5rem;
+      max-width: 500px;
+      max-height: 300px;
+    }
+
+    @media (max-width: 480px) {
+      max-width: 400px;
+      max-height: 240px;
     }
   }
 
@@ -339,7 +342,7 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
 
       &.mat-focused .mat-mdc-form-field-flex {
         background: rgba(255, 255, 255, 1);
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
     }
 
@@ -396,12 +399,13 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
     letter-spacing: 0.5px;
     background: linear-gradient(135deg, $primary-color, $secondary-color);
     border: none;
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
     transition: all 0.3s ease;
+    color: white;
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
     }
 
     &:active:not(:disabled) {
@@ -423,55 +427,7 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
   }
 }
 
-// Divider
-.divider {
-  text-align: center;
-  margin: 32px 0;
-  position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.1);
-  }
-
-  span {
-    background: $white;
-    padding: 0 16px;
-    color: $text-secondary;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-}
-
-// Social Register
-.social-register {
-  margin-bottom: 32px;
-
-  .social-button {
-    width: 100%;
-    height: 48px;
-    border-radius: 12px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    font-weight: 500;
-    transition: all 0.3s ease;
-
-    &:hover {
-      border-color: $primary-color;
-      background: rgba(16, 185, 129, 0.05);
-      transform: translateY(-1px);
-    }
-
-    mat-icon {
-      margin-right: 8px;
-      color: #ea4335;
-    }
-  }
-}
 
 // Footer
 .register-footer {
@@ -568,7 +524,7 @@ $shadow-heavy: rgba(0, 0, 0, 0.2);
           border-radius: 50%;
 
           &:hover {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(102, 126, 234, 0.1);
           }
         }
 

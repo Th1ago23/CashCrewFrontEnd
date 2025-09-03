@@ -19,7 +19,7 @@ import { ExpenseService } from '../../services/expense.service';
 import { NotificationService } from '../../services/notification.service';
 import { ModalService } from '../../services/modal.service';
 import { GroupSummary } from '../../models/group.model';
-import { GroupBalance, MemberBalance, Debt, ExpenseDetail } from '../../models/expense.model';
+import { GroupBalance, MemberBalance } from '../../models/expense.model';
 import { User } from '../../models/user.model';
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
 
@@ -52,17 +52,17 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['description', 'value', 'paidBy', 'date', 'participants'];
   activeTab = 0;
 
-  private subscriptions: Subscription[] = [];
+  private readonly subscriptions: Subscription[] = [];
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService,
-    private groupService: GroupService,
-    private expenseService: ExpenseService,
-    private notificationService: NotificationService,
-    private modalService: ModalService,
-    private dialog: MatDialog
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly groupService: GroupService,
+    private readonly expenseService: ExpenseService,
+    private readonly notificationService: NotificationService,
+    private readonly modalService: ModalService,
+    private readonly dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -105,22 +105,18 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     console.log('ID do grupo convertido para número:', groupIdNumber);
     this.isLoading = true;
 
-    // Buscar detalhes do grupo usando o método disponível
-    console.log('Fazendo requisição para:', `/api/Group/GetGroupName?gpId=${groupIdNumber}`);
-    this.groupService.getGroupName(groupIdNumber).subscribe({
-      next: (response: { name: string }) => {
-        console.log('Resposta do backend:', response);
-        // Criar um objeto GroupSummary básico com os dados disponíveis
-        this.group = {
-          id: groupIdNumber,
-          name: response.name,
-          isPublic: false,
-          leaderId: this.currentUser?.id || 0,
-          users: [], // Será preenchido quando carregarmos as despesas
-          expenses: []
-        };
-        this.loadGroupExpenses(groupIdNumber);
+    // Buscar detalhes completos do grupo usando o método disponível
+    console.log('Fazendo requisição para:', `/api/Group/${groupIdNumber}`);
+    this.groupService.getGroupById(groupIdNumber).subscribe({
+      next: (response: GroupSummary) => {
+        console.log('✅ Resposta do backend:', response);
+        this.group = response;
         this.isLoading = false;
+        console.log('📋 Grupo carregado:', this.group);
+        console.log('🔄 Estado de loading:', this.isLoading);
+
+        // Carregar despesas e balanços do grupo
+        this.loadGroupExpenses(groupIdNumber);
       },
       error: (error: any) => {
         console.error('Erro ao carregar detalhes do grupo:', error);
@@ -141,15 +137,19 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
 
 
   loadGroupExpenses(groupId: number): void {
+    console.log('🔄 Carregando despesas do grupo:', groupId);
     this.isLoadingExpenses = true;
     this.expenseService.getGroupExpenses(groupId).subscribe({
       next: (balance: GroupBalance) => {
-        console.log('Balanço do grupo carregado:', balance);
+        console.log('✅ Balanço do grupo carregado:', balance);
+        console.log('📊 Despesas:', balance?.expenses?.length || 0);
+        console.log('💰 Total gasto:', balance?.totalExpenses || 0);
+        console.log('⚖️ Dívidas:', balance?.debts?.length || 0);
         this.groupBalance = balance;
         this.isLoadingExpenses = false;
       },
       error: (error: any) => {
-        console.error('Erro ao carregar despesas do grupo:', error);
+        console.error('❌ Erro ao carregar despesas do grupo:', error);
         this.isLoadingExpenses = false;
         this.notificationService.error('Erro ao carregar despesas do grupo');
 

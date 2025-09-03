@@ -99,6 +99,15 @@
           <mat-icon>bug_report</mat-icon>
           Testar API
         </button>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="clearDataAndReload()"
+          class="empty-action-button"
+          style="margin-left: 10px;">
+          <mat-icon>clear_all</mat-icon>
+          Limpar Dados
+        </button>
       </div>
 
       <div *ngIf="!isLoading && groups.length > 0" class="groups-grid">
@@ -117,7 +126,11 @@
                   </span>
                   <span class="group-leader" *ngIf="group.leaderId === currentUser?.id">
                     <mat-icon>star</mat-icon>
-                    Líder
+                    Você é o líder
+                  </span>
+                  <span class="group-leader-name" *ngIf="group.leaderId !== currentUser?.id">
+                    <mat-icon>person</mat-icon>
+                    Líder: {{ getGroupLeaderName(group) }}
                   </span>
                 </div>
               </div>
@@ -136,9 +149,9 @@
                 <mat-icon>visibility</mat-icon>
                 <span>Ver Grupo</span>
               </button>
-              <button mat-menu-item (click)="openAddMemberDialog(group)">
-                <mat-icon>person_add</mat-icon>
-                <span>Adicionar Membro</span>
+              <button mat-menu-item (click)="openInviteDialog(group)">
+                <mat-icon>link</mat-icon>
+                <span>Gerar Convite</span>
               </button>
               <button
                 mat-menu-item
@@ -163,7 +176,7 @@
               <div class="stat">
                 <mat-icon class="stat-icon">receipt</mat-icon>
                 <div class="stat-info">
-                  <span class="stat-value">{{ (group.expenses && group.expenses.length) || 0 }}</span>
+                  <span class="stat-value">{{ (group.Expenses && group.Expenses.length) || 0 }}</span>
                   <span class="stat-label">Despesas</span>
                 </div>
               </div>
@@ -183,14 +196,7 @@
               <mat-icon>visibility</mat-icon>
               Ver Grupo
             </button>
-            <button
-              mat-stroked-button
-              color="accent"
-              (click)="openAddMemberDialog(group)"
-              class="add-member-button">
-              <mat-icon>person_add</mat-icon>
-              Adicionar Membro
-            </button>
+
           </mat-card-actions>
         </mat-card>
       </div>
@@ -204,10 +210,12 @@
     (closed)="onGroupDialogClosed()">
   </app-create-group-dialog>
 
-  <!-- Add Member Dialog -->
-  <app-add-member-dialog
-    *ngIf="showAddMemberDialog && selectedGroup"
+
+
+  <!-- Invite Dialog -->
+  <app-invite-dialog
+    *ngIf="showInviteDialog && selectedGroup"
     [group]="selectedGroup"
-    (memberAdded)="onMemberAdded()">
-  </app-add-member-dialog>
+    (closed)="onInviteDialogClosed()">
+  </app-invite-dialog>
 </div>

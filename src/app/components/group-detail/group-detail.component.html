@@ -47,7 +47,7 @@
           </div>
           <div class="stat-content">
             <h3>{{ (group.users && group.users.length) || 0 }}</h3>
-            <p>Membros</p>
+            <p>MEMBROS</p>
           </div>
         </div>
 
@@ -57,7 +57,7 @@
           </div>
           <div class="stat-content">
             <h3>{{ groupBalance?.expenses?.length || 0 }}</h3>
-            <p>Despesas</p>
+            <p>DESPESAS</p>
           </div>
         </div>
 
@@ -67,7 +67,7 @@
           </div>
           <div class="stat-content">
             <h3>{{ formatCurrency(groupBalance?.totalExpenses || 0) }}</h3>
-            <p>Total Gasto</p>
+            <p>TOTAL GASTO</p>
           </div>
         </div>
 
@@ -77,7 +77,7 @@
           </div>
           <div class="stat-content">
             <h3>{{ groupBalance?.debts?.length || 0 }}</h3>
-            <p>Transações</p>
+            <p>TRANSAÇÕES</p>
           </div>
         </div>
       </div>
@@ -117,9 +117,9 @@
                       <div class="debts-list">
                         <div *ngFor="let debt of groupBalance?.debts || []" class="debt-item">
                           <div class="debt-info">
-                            <span class="from-user">{{ debt.fromUser.name }}</span>
+                            <span class="from-user">{{ debt.fromUser.Name }}</span>
                             <mat-icon class="debt-arrow">arrow_forward</mat-icon>
-                            <span class="to-user">{{ debt.toUser.name }}</span>
+                            <span class="to-user">{{ debt.toUser.Name }}</span>
                           </div>
                           <div class="debt-amount">{{ formatCurrency(debt.amount) }}</div>
                         </div>
@@ -164,7 +164,7 @@
                         <div class="expense-details">
                           <div class="expense-detail-item">
                             <span class="detail-label">Pago por:</span>
-                            <span class="detail-value">{{ expense.user.name }}</span>
+                            <span class="detail-value">{{ expense.user.Name }}</span>
                           </div>
                           <div class="expense-detail-item">
                             <span class="detail-label">Participantes:</span>
@@ -181,17 +181,19 @@
                 </div>
 
                 <div *ngIf="!isLoadingExpenses && (!groupBalance?.expenses || groupBalance?.expenses?.length === 0)" class="no-expenses">
-                  <mat-icon class="no-expenses-icon">receipt</mat-icon>
-                  <h3>Nenhuma despesa registrada</h3>
-                  <p>Seja o primeiro a criar uma despesa no grupo!</p>
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="openCreateExpenseDialog()"
-                    class="create-first-expense-button">
-                    <mat-icon>add</mat-icon>
-                    Criar Primeira Despesa
-                  </button>
+                  <div class="no-expenses-content">
+                    <mat-icon class="no-expenses-icon">receipt_long</mat-icon>
+                    <h3>Nenhuma despesa registrada</h3>
+                    <p>Seja o primeiro a criar uma despesa no grupo!</p>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="openCreateExpenseDialog()"
+                      class="create-first-expense-button">
+                      <mat-icon>add</mat-icon>
+                      Criar Primeira Despesa
+                    </button>
+                  </div>
                 </div>
               </div>
             </mat-tab>
@@ -214,7 +216,7 @@
                               <mat-icon>person</mat-icon>
                             </div>
                             <div class="member-details">
-                              <h4>{{ memberBalance.user.name }}</h4>
+                              <h4>{{ memberBalance.user.Name }}</h4>
                               <span class="member-status">Membro</span>
                             </div>
                           </div>
@@ -260,12 +262,12 @@
                           <span class="timeline-date">{{ formatDate(expense.date) }}</span>
                         </div>
                         <div class="timeline-details">
-                          <p><strong>{{ expense.user.name }}</strong> pagou {{ formatCurrency(expense.value) }}</p>
+                          <p><strong>{{ expense.user.Name }}</strong> pagou {{ formatCurrency(expense.value) }}</p>
                           <p>Dividido entre {{ expense.users.length }} pessoa(s)</p>
                           <div class="participants-list">
                             <span class="participants-label">Participantes:</span>
                             <span *ngFor="let user of expense.users; let last = last">
-                              {{ user.name }}{{ !last ? ', ' : '' }}
+                              {{ user.Name }}{{ !last ? ', ' : '' }}
                             </span>
                           </div>
                         </div>

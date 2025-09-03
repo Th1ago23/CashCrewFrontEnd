@@ -79,9 +79,9 @@ export class CreateGroupDialogComponent {
             leaderId: currentUser.id,
             users: [{
               id: currentUser.id,
-              name: currentUser.fullName
+              Name: currentUser.fullName
             }],
-            expenses: []
+            Expenses: []
           };
 
           console.log('Grupo criado, emitindo eventos...');

@@ -25,8 +25,4 @@ export interface UserResponse {
   username: string;
 }
 
-// Corresponde ao UserSummaryDTO do backend
-export interface UserSummary {
-  id: number;        // ✅ Agora o backend retorna o ID
-  name: string;
-}
+// UserSummary está definido em expense.model.ts para evitar duplicação

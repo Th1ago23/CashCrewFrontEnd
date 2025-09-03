@@ -1,4 +1,3 @@
-import { User } from "./user.model";
 import { Group } from "./group.model";
 
 export interface Expense {
@@ -16,7 +15,7 @@ export interface ExpenseCreate {
   value: number;
   description: string;
   date: Date;
-  paidByUserId: number;
+  paidByUserId?: number;
   participantsIds: number[];
 }
 
@@ -32,7 +31,7 @@ export interface ExpenseDetail {
 
 export interface UserSummary {
   id: number;        // ✅ Agora o backend retorna o ID
-  name: string;
+  Name: string;      // Backend retorna "Name" (maiúsculo)
 }
 
 export interface Debt {

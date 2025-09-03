@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { User, UserLogin, UserRegister, UserResponse } from '../models/user.model';
+import { User, UserLogin, UserRegister } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly API_URL = '/api/Auth';
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     this.loadCurrentUser();
   }
 
@@ -20,7 +20,7 @@ export class AuthService {
       .pipe(
         tap(response => {
           localStorage.setItem('token', response.token);
-          this.decodeAndSetUser(response.token);
+          this.decodeAndSetUser(response.token, false); // false = não forçar logout
         })
       );
   }
@@ -32,6 +32,13 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     this.currentUserSubject.next(null);
+    console.log('🚪 Logout realizado - token removido');
+  }
+
+  clearAllData(): void {
+    localStorage.clear();
+    this.currentUserSubject.next(null);
+    console.log('🧹 Todos os dados limpos do localStorage');
   }
 
   getCurrentUser(): User | null {
@@ -49,16 +56,31 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  private decodeAndSetUser(token: string): void {
+  private decodeAndSetUser(token: string, forceLogoutOnOldToken: boolean = true): void {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       console.log('JWT Payload:', payload);
+      console.log('🔍 Campos disponíveis no payload:', Object.keys(payload));
+      console.log('🔍 payload.name:', payload.name);
+      console.log('🔍 payload.fullName:', payload.fullName);
+      console.log('🔍 payload.email:', payload.email);
+
+      // Se o token não tem o campo 'name', é um token antigo
+      if (!payload.name && !payload.fullName) {
+        if (forceLogoutOnOldToken) {
+          console.warn('⚠️ Token antigo detectado (sem fullName), fazendo logout...');
+          this.logout();
+          return;
+        } else {
+          console.warn('⚠️ Token antigo detectado (sem fullName), mas não forçando logout durante login');
+        }
+      }
 
       const user: User = {
-        id: payload.userId || payload.sub || payload.nameid,
+        id: parseInt(payload.userId || payload.sub || payload.nameid),
         email: payload.email || payload.unique_name,
         username: payload.username || payload.preferred_username || payload.email?.split('@')[0],
-        fullName: payload.fullName || payload.name || payload.given_name || payload.email?.split('@')[0],
+        fullName: payload.name || payload.fullName || payload.given_name || payload.email?.split('@')[0] || 'Usuário',
         birthDay: new Date(payload.birthDay || payload.birthdate || Date.now())
       };
 
@@ -66,14 +88,17 @@ export class AuthService {
       this.currentUserSubject.next(user);
     } catch (error) {
       console.error('Erro ao decodificar token:', error);
-      this.logout();
+      if (forceLogoutOnOldToken) {
+        this.logout();
+      }
     }
   }
 
   private loadCurrentUser(): void {
     const token = this.getToken();
     if (token) {
-      this.decodeAndSetUser(token);
+      console.log('🔄 Carregando usuário do token existente...');
+      this.decodeAndSetUser(token, true); // true = forçar logout se token antigo
     }
   }
 }

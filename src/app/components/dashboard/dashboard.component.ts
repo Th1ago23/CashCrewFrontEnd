@@ -6,14 +6,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../services/auth.service';
 import { GroupService } from '../../services/group.service';
 import { NotificationService } from '../../services/notification.service';
+import { ModalService } from '../../services/modal.service';
 import { GroupSummary } from '../../models/group.model';
 import { User } from '../../models/user.model';
 import { CreateGroupDialogComponent } from '../create-group-dialog/create-group-dialog.component';
-import { AddMemberDialogComponent } from '../add-member-dialog/add-member-dialog.component';
+import { InviteDialogComponent } from '../invite-dialog/invite-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,8 +27,9 @@ import { AddMemberDialogComponent } from '../add-member-dialog/add-member-dialog
     MatIconModule,
     MatProgressSpinnerModule,
     MatMenuModule,
+    MatTooltipModule,
     CreateGroupDialogComponent,
-    AddMemberDialogComponent
+    InviteDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -36,14 +39,15 @@ export class DashboardComponent implements OnInit {
   groups: GroupSummary[] = [];
   isLoading = false;
   showCreateGroupDialog = false;
-  showAddMemberDialog = false;
+  showInviteDialog = false;
   selectedGroup: GroupSummary | null = null;
 
   constructor(
-    private authService: AuthService,
-    private groupService: GroupService,
-    private notificationService: NotificationService,
-    private router: Router
+    private readonly authService: AuthService,
+    private readonly groupService: GroupService,
+    private readonly notificationService: NotificationService,
+    private readonly router: Router,
+    private readonly modalService: ModalService
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +65,16 @@ export class DashboardComponent implements OnInit {
 
     console.log('📋 Carregando grupos...');
     this.loadGroups();
+
+    // Subscrever ao modal service
+    this.modalService.createGroupDialog$.subscribe(show => {
+      this.showCreateGroupDialog = show;
+    });
+
+    this.modalService.inviteDialog$.subscribe(show => {
+      console.log('🔄 Modal de convite mudou para:', show);
+      this.showInviteDialog = show;
+    });
   }
 
   loadGroups(): void {
@@ -91,12 +105,16 @@ export class DashboardComponent implements OnInit {
   }
 
   openCreateGroupDialog(): void {
-    this.showCreateGroupDialog = true;
+    this.modalService.openCreateGroupDialog();
   }
 
-  openAddMemberDialog(group: GroupSummary): void {
+
+
+  openInviteDialog(group: GroupSummary): void {
+    console.log('🎯 Abrindo modal de convite para grupo:', group);
     this.selectedGroup = group;
-    this.showAddMemberDialog = true;
+    this.modalService.openInviteDialog();
+    console.log('📱 Modal de convite aberto, showInviteDialog:', this.showInviteDialog);
   }
 
   onGroupCreated(event: any): void {
@@ -111,14 +129,14 @@ export class DashboardComponent implements OnInit {
 
   onGroupDialogClosed(): void {
     console.log('Dashboard: Fechando modal de criar grupo');
-    this.showCreateGroupDialog = false;
+    this.modalService.closeCreateGroupDialog();
   }
 
-  onMemberAdded(): void {
-    this.showAddMemberDialog = false;
+
+
+  onInviteDialogClosed(): void {
+    this.modalService.closeInviteDialog();
     this.selectedGroup = null;
-    this.loadGroups();
-    this.notificationService.success('Membro adicionado com sucesso!');
   }
 
   viewGroup(group: GroupSummary): void {
@@ -130,11 +148,32 @@ export class DashboardComponent implements OnInit {
 
   deleteGroup(group: GroupSummary): void {
     if (confirm(`Tem certeza que deseja excluir o grupo "${group.name}"? Esta ação não pode ser desfeita.`)) {
+      console.log('🗑️ Excluindo grupo:', group);
 
-      // Simulação temporária
-      this.notificationService.success('Grupo excluído com sucesso!');
-      // Remover o grupo da lista local
-      this.groups = this.groups.filter(g => g.name !== group.name);
+      this.groupService.deleteGroup(group.id).subscribe({
+        next: (response) => {
+          console.log('✅ Grupo excluído com sucesso:', response);
+          this.notificationService.success('Grupo excluído com sucesso!');
+
+          // Recarregar a lista de grupos para garantir consistência
+          this.loadGroups();
+        },
+        error: (error) => {
+          console.error('❌ Erro ao excluir grupo:', error);
+
+          // Tratar diferentes tipos de erro
+          if (error.status === 400) {
+            const errorMessage = error.error?.message || 'Não é possível excluir este grupo.';
+            this.notificationService.error(errorMessage);
+          } else if (error.status === 404) {
+            this.notificationService.error('Grupo não encontrado.');
+          } else if (error.status === 403) {
+            this.notificationService.error('Você não tem permissão para excluir este grupo.');
+          } else {
+            this.notificationService.error('Erro ao excluir grupo. Tente novamente.');
+          }
+        }
+      });
     }
   }
 
@@ -146,8 +185,21 @@ export class DashboardComponent implements OnInit {
 
   getTotalExpenses(): number {
     return this.groups.reduce((total, group) => {
-      return total + (group.expenses ? group.expenses.length : 0);
+      return total + (group.Expenses ? group.Expenses.length : 0);
     }, 0);
+  }
+
+  getGroupLeaderName(group: GroupSummary): string {
+    console.log('🔍 Buscando líder do grupo:', group.name);
+    console.log('🔍 LeaderId:', group.leaderId, 'tipo:', typeof group.leaderId);
+    console.log('🔍 CurrentUser ID:', this.currentUser?.id, 'tipo:', typeof this.currentUser?.id);
+    console.log('🔍 Usuários do grupo:', group.users);
+
+    const leader = group.users.find(user => user.id === group.leaderId);
+    console.log('🔍 Líder encontrado:', leader);
+    console.log('🔍 Líder Name:', leader?.Name);
+
+    return leader ? leader.Name : 'Líder não encontrado';
   }
 
   testApi(): void {
@@ -163,5 +215,11 @@ export class DashboardComponent implements OnInit {
         this.notificationService.error(`Erro na API: ${error.status} - ${error.message}`);
       }
     });
+  }
+
+  clearDataAndReload(): void {
+    console.log('🧹 Limpando dados e recarregando...');
+    this.authService.clearAllData();
+    window.location.reload();
   }
 }

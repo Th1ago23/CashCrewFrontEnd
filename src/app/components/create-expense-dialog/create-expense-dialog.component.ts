@@ -67,8 +67,8 @@ export class CreateExpenseDialogComponent implements OnInit {
     // Configurar participantes disponíveis
     this.availableParticipants = this.group.users.map(user => ({
       id: user.id, // ✅ Agora temos ID real do backend
-      username: user.name,
-      fullName: user.name,
+      username: user.Name,
+      fullName: user.Name,
       email: '',
       birthDay: new Date()
     }));

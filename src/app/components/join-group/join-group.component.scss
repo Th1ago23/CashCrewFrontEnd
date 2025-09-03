@@ -1,0 +1,184 @@
+.join-group-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.join-group-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.card-header {
+  text-align: center;
+  padding: 40px 32px 32px 32px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+  .icon-container {
+    margin-bottom: 24px;
+
+    .group-icon {
+      font-size: 4rem;
+      color: #667eea;
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+
+  h1 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+.card-content {
+  padding: 32px;
+}
+
+.auth-required {
+  text-align: center;
+
+  .warning-icon {
+    font-size: 3rem;
+    color: #ff9800;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 1.3rem;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .auth-button {
+    min-width: 160px;
+    height: 44px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.join-section {
+  text-align: center;
+
+  .invite-info {
+    margin-bottom: 32px;
+
+    .info-icon {
+      font-size: 3rem;
+      color: #4caf50;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      margin: 0 0 12px 0;
+      color: #333;
+      font-size: 1.3rem;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+
+  .join-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+
+    .join-button {
+      min-width: 200px;
+      height: 48px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cancel-button {
+      min-width: 180px;
+      height: 44px;
+      font-size: 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+.joining-section {
+  text-align: center;
+
+  .loading-content {
+    h3 {
+      margin: 24px 0 8px 0;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 600px) {
+  .join-group-container {
+    padding: 16px;
+  }
+
+  .card-header {
+    padding: 32px 24px 24px 24px;
+
+    h1 {
+      font-size: 1.6rem;
+    }
+  }
+
+  .card-content {
+    padding: 24px;
+  }
+
+  .join-actions {
+    .join-button,
+    .cancel-button {
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+}

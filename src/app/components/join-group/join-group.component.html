@@ -1,0 +1,61 @@
+<div class="join-group-container">
+  <div class="join-group-card">
+    <div class="card-header">
+      <div class="icon-container">
+        <mat-icon class="group-icon">group_add</mat-icon>
+      </div>
+      <h1>Entrar no Grupo</h1>
+      <p>Você foi convidado para participar de um grupo</p>
+    </div>
+
+    <div class="card-content">
+      <div *ngIf="!isAuthenticated" class="auth-required">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <h3>Autenticação Necessária</h3>
+        <p>Você precisa estar logado para entrar no grupo</p>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="goToDashboard()"
+          class="auth-button">
+          <mat-icon>login</mat-icon>
+          Fazer Login
+        </button>
+      </div>
+
+      <div *ngIf="isAuthenticated && !isJoining" class="join-section">
+        <div class="invite-info">
+          <mat-icon class="info-icon">info</mat-icon>
+          <h3>Convite Válido</h3>
+          <p>Clique no botão abaixo para entrar no grupo</p>
+        </div>
+
+        <div class="join-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="joinGroup()"
+            class="join-button">
+            <mat-icon>group_add</mat-icon>
+            Entrar no Grupo
+          </button>
+          <button
+            mat-stroked-button
+            (click)="goToDashboard()"
+            class="cancel-button">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar ao Dashboard
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="isJoining" class="joining-section">
+        <div class="loading-content">
+          <mat-spinner diameter="50"></mat-spinner>
+          <h3>Entrando no grupo...</h3>
+          <p>Aguarde um momento</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,4 @@
-import { UserSummary } from "./user.model";
-import { ExpenseDetail } from "./expense.model";
+import { ExpenseDetail, UserSummary } from "./expense.model";
 
 export interface Group {
   id: number;
@@ -11,6 +10,7 @@ export interface Group {
 
 export interface GroupCreate {
   name: string;
+  leaderId: number;
   isPublic: boolean;
 }
 
@@ -32,5 +32,5 @@ export interface GroupSummary {
   leaderId: number;
   users: UserSummary[];
   isPublic: boolean;
-  expenses: ExpenseDetail[];
+  Expenses: ExpenseDetail[];  // ✅ Corrigido para corresponder ao backend
 }
